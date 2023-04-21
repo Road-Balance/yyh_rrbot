@@ -36,6 +36,7 @@ install(
   DIRECTORY
     ros2_control
     launch
+    worlds
     urdf
   DESTINATION
     share/${PROJECT_NAME}/
