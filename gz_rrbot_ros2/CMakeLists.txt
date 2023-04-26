@@ -35,6 +35,7 @@ endif()
 install(
   DIRECTORY
     ros2_control
+    config
     launch
     worlds
     urdf

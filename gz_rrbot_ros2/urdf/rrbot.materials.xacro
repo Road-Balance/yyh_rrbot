@@ -3,7 +3,10 @@
 Copied from ROS1 example -
 https://github.com/ros-simulation/gazebo_ros_demos/blob/kinetic-devel/rrbot_description/urdf/materials.xacro
 -->
-<robot>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="rrbot" params="prefix *origin">
+  <xacro:property name="link_color" value="Gazebo/Silver" />
 
   <material name="black">
     <color rgba="0.0 0.0 0.0 1.0"/>
@@ -41,4 +44,17 @@ https://github.com/ros-simulation/gazebo_ros_demos/blob/kinetic-devel/rrbot_desc
     <color rgba="1.0 1.0 1.0 1.0"/>
   </material>
 
+  <gazebo reference="${prefix}link1">
+    <material>${link_color}</material>
+    <selfCollide>false</selfCollide>
+    <!-- <gravity>true</gravity> -->
+  </gazebo>
+
+  <gazebo reference="${prefix}link2">
+    <material>${link_color}</material>
+    <selfCollide>false</selfCollide>
+    <!-- <gravity>true</gravity> -->
+  </gazebo>
+
+  </xacro:macro>
 </robot>
