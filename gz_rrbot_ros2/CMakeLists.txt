@@ -34,11 +34,11 @@ endif()
 
 install(
   DIRECTORY
-    ros2_control
     config
     launch
-    worlds
+    ros2_control
     urdf
+    worlds
   DESTINATION
     share/${PROJECT_NAME}/
 )

@@ -21,7 +21,8 @@ from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, Regi
 
 from launch.conditions import IfCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
-from launch.actions import IncludeLaunchDescription
+from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler
+
 from launch_ros.actions import Node
 
 from launch_ros.substitutions import FindPackageShare
@@ -57,7 +58,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("gz_rrbot_ros2"), "urdf", "rrbot.urdf.xacro"]
+                [FindPackageShare("gz_rrbot_ros2"), "urdf", "rrbot.xacro"]
             ),
         ]
     )
@@ -71,37 +72,27 @@ def generate_launch_description():
     )
 
     # Spawn Robot
-    spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
-                        arguments=['-topic', 'robot_description',
-                                   '-entity', 'rrbot'],
-                        output='screen')
+    spawn_entity = Node(
+        package='gazebo_ros', 
+        executable='spawn_entity.py',
+        arguments=['-topic', 'robot_description',
+                    '-entity', 'rrbot'],
+        output='screen'
+    )
 
-    # spawn_dd_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner.py",
-    #     arguments=["diffbot_base_controller"],
-    #     output="screen",
-    # )
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=["joint_state_broadcaster",
+                   "--controller-manager", "/controller_manager"],
+    )
 
-    # spawn_jsb_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner.py",
-    #     arguments=["joint_state_broadcaster"],
-    #     output="screen",
-    # )
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=["forward_position_controller", "-c", "/controller_manager"],
+    )
 
-    # joint_trajectory_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner.py",
-    #     arguments=["joint_trajectory_controller"],
-    #     output="screen",
-    # )
-
-    # load_joint_trajectory_controller = ExecuteProcess(
-    #     cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-    #          'joint_trajectory_controller'],
-    #     output='screen'
-    # )
 
     # rviz_config_file = os.path.join(pkg_path, 'rviz', 'one_robot.rviz')
     # rviz_node = Node(
@@ -114,19 +105,20 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            # arg_show_rviz,
-            # RegisterEventHandler(
-            #     event_handler=OnProcessExit(
-            #         target_action=spawn_entity,
-            #         on_exit=[spawn_dd_controller],
-            #     )
-            # ),
-            # RegisterEventHandler(
-            #     event_handler=OnProcessExit(
-            #         target_action=spawn_dd_controller,
-            #         on_exit=[spawn_jsb_controller],
-            #     )
-            # ),
+            arg_show_rviz,
+            
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=spawn_entity,
+                    on_exit=[joint_state_broadcaster_spawner],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster_spawner,
+                    on_exit=[robot_controller_spawner],
+                )
+            ),
 
             start_gazebo_server_cmd,
             start_gazebo_client_cmd,
