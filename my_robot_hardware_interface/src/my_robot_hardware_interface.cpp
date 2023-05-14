@@ -12,13 +12,18 @@
 namespace ros2_control_demo_hardware
 {
 
-// on_init() method to parse and fetch data from the robot's 
-// URDF/XACRO description.
-CallbackReturn RRBotSystemPositionOnlyHardware::on_init(
-  const hardware_interface::HardwareInfo & info){
-  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
+// // on_init() method to parse and fetch data from the robot's 
+// // URDF/XACRO description.
+// CallbackReturn RRBotSystemPositionOnlyHardware::on_init(
+//   const hardware_interface::HardwareInfo & info)
+
+hardware_interface::return_type RRBotSystemPositionOnlyHardware::configure(
+  const hardware_interface::HardwareInfo & info)
+{
+
+  if (configure_default(info) != hardware_interface::return_type::OK)
   {
-    return CallbackReturn::ERROR;
+    return hardware_interface::return_type::ERROR;
   }
 
   // START: This part here is for exemplary purposes - Please do not copy to your production code
@@ -69,40 +74,74 @@ CallbackReturn RRBotSystemPositionOnlyHardware::on_init(
     }
   }
 
-  return CallbackReturn::SUCCESS;
+  status_ = hardware_interface::status::CONFIGURED;
+  return hardware_interface::return_type::OK;
 }
 
-// The on_configure() method is used to initiate communication
-// with the hardware and in order to ensure that the hardware states can be read.
-CallbackReturn RRBotSystemPositionOnlyHardware::on_configure(
-    const rclcpp_lifecycle::State &previous_state) 
+// // The on_configure() method is used to initiate communication
+// // with the hardware and in order to ensure that the hardware states can be read.
+// CallbackReturn RRBotSystemPositionOnlyHardware::on_configure(
+//     const rclcpp_lifecycle::State &previous_state) 
+// {
+//   // START: This part here is for exemplary purposes - Please do not copy to
+//   // your production code
+
+//   // prevent unused variable warning
+//   auto prev_state = previous_state;
+//   RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"),
+//               "Configuring ...please wait...");
+
+//   for (int i = 0; i < hw_start_sec_; i++) {
+//     rclcpp::sleep_for(std::chrono::seconds(1));
+//     RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"),
+//                 "%.1f seconds left...", hw_start_sec_ - i);
+//   }
+//   // END: This part here is for exemplary purposes - Please do not copy to your
+//   // production code
+
+//   // reset values always when configuring hardware
+//   for (uint i = 0; i < hw_states_.size(); i++) {
+//     hw_states_[i] = 0;
+//     hw_commands_[i] = 0;
+//   }
+
+//   RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"),
+//               "Successfully configured!");
+
+//   return CallbackReturn::SUCCESS;
+// }
+
+hardware_interface::return_type RRBotSystemPositionOnlyHardware::start()
 {
-  // START: This part here is for exemplary purposes - Please do not copy to
-  // your production code
+  RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"), "Starting ...please wait...");
 
-  // prevent unused variable warning
-  auto prev_state = previous_state;
-  RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"),
-              "Configuring ...please wait...");
-
-  for (int i = 0; i < hw_start_sec_; i++) {
+  for (auto i = 0; i <= hw_start_sec_; i++)
+  {
     rclcpp::sleep_for(std::chrono::seconds(1));
-    RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"),
-                "%.1f seconds left...", hw_start_sec_ - i);
+    RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"), "%.1f seconds left...", hw_start_sec_ - i);
   }
-  // END: This part here is for exemplary purposes - Please do not copy to your
-  // production code
 
-  // reset values always when configuring hardware
+  // set some default values
   for (uint i = 0; i < hw_states_.size(); i++) {
     hw_states_[i] = 0;
     hw_commands_[i] = 0;
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"),
-              "Successfully configured!");
+  // // set some default values
+  // for (auto i = 0u; i < hw_positions_.size(); i++)
+  // {
+  //   if (std::isnan(hw_positions_[i]))
+  //   {
+  //     hw_positions_[i] = 0;
+  //     hw_velocities_[i] = 0;
+  //     hw_commands_[i] = 0;
+  //   }
+  // }
 
-  return CallbackReturn::SUCCESS;
+  status_ = hardware_interface::status::STARTED;
+  RCLCPP_INFO(rclcpp::get_logger("RRBotSystemPositionOnlyHardware"), "System Successfully started!");
+
+  return hardware_interface::return_type::OK;
 }
 
 // The export_state_interfaces() method is used 
