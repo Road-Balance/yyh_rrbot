@@ -55,21 +55,6 @@ ament_target_dependencies(
 
 pluginlib_export_plugin_description_file(hardware_interface my_robot_hardware_interface.xml)
 
-
-## EXPORTS
-ament_export_include_directories(
-  include
-)
-ament_export_libraries(
-  ${PROJECT_NAME}
-)
-ament_export_dependencies(
-  hardware_interface
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-)
-
 # INSTALL
 install(
   TARGETS ${PROJECT_NAME}
@@ -86,6 +71,20 @@ install(
     config
   DESTINATION
     share/${PROJECT_NAME}/
+)
+
+## EXPORTS
+ament_export_include_directories(
+  include
+)
+ament_export_libraries(
+  ${PROJECT_NAME}
+)
+ament_export_dependencies(
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
 )
 
 ament_package()

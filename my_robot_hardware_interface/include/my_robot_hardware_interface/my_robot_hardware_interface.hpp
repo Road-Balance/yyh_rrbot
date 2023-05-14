@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "hardware_interface/base_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
@@ -16,9 +17,11 @@
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-namespace ros2_control_demo_hardware
+namespace ros2_control_demo_hardware 
 {
-class RRBotSystemPositionOnlyHardware : public hardware_interface::SystemInterface
+class RRBotSystemPositionOnlyHardware
+//  : public hardware_interface::SystemInterface
+: public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
 {
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(RRBotSystemPositionOnlyHardware);
