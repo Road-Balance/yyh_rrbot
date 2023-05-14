@@ -39,6 +39,7 @@ install(
     ros2_control
     urdf
     worlds
+    rviz
   DESTINATION
     share/${PROJECT_NAME}/
 )
