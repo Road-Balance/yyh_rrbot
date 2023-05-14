@@ -30,6 +30,8 @@ ros2 control list_controllers
 * custom hw interface
 
 ```
+cbp my_robot_hardware_interface && source install/local_setup.bash
+
 ros2 launch my_robot_hardware_interface bring_up_on_hardware.launch.py 
 
 ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "data:
